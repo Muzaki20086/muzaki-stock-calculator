@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Muzaki News Predict — Prediksi News Forex, Gold, Komoditas & Crypto</title>
+<meta name="description" content="Aplikasi analisis & prediksi dampak news ekonomi terhadap Forex, Gold, Komoditas, dan Crypto. Plus kalkulator trading lengkap.">
+<style>
+  :root{
+    --bg:#0a0f1c;--card:#141b2d;--card2:#1b2438;--line:#28324d;
+    --txt:#e9eefb;--muted:#8997b8;--primary:#2dd4bf;--primary2:#14b8a6;--blue:#3b82f6;
+    --green:#22c55e;--red:#ef4444;--yellow:#eab308;--radius:14px;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;font-family:'Segoe UI',system-ui,sans-serif}
+  body{background:radial-gradient(circle at top,#102036,#0a0f1c 60%);color:var(--txt);min-height:100vh;padding-bottom:60px}
+  header{padding:18px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--line);position:sticky;top:0;background:rgba(10,15,28,.88);backdrop-filter:blur(10px);z-index:50}
+  .brand{display:flex;align-items:center;gap:11px;font-weight:800;font-size:1.1rem}
+  .brand img{width:42px;height:42px;border-radius:11px;object-fit:cover}
+  .brand .ic{width:42px;height:42px;border-radius:11px;background:linear-gradient(135deg,var(--primary),var(--blue));display:grid;place-items:center;font-size:20px}
+  .brand small{display:block;font-size:.6rem;color:var(--muted);font-weight:500;letter-spacing:1px}
+  .wrap{max-width:800px;margin:0 auto;padding:0 16px}
+  .hero{text-align:center;padding:36px 0 22px}
+  .hero h1{font-size:1.8rem;margin-bottom:9px;line-height:1.25}
+  .hero h1 span{background:linear-gradient(90deg,var(--primary),var(--blue));-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+  .hero p{color:var(--muted);font-size:.9rem;max-width:500px;margin:0 auto}
+
+  .tabs{display:flex;gap:6px;background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:6px;margin-bottom:20px;overflow-x:auto;scrollbar-width:none}
+  .tabs::-webkit-scrollbar{display:none}
+  .tab{flex:0 0 auto;padding:11px 14px;border:none;background:none;color:var(--muted);font-weight:600;font-size:.84rem;border-radius:10px;cursor:pointer;white-space:nowrap}
+  .tab.active{background:linear-gradient(135deg,var(--primary),var(--primary2));color:#06241f}
+
+  .card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:22px;margin-bottom:18px}
+  .card h2{font-size:1.1rem;margin-bottom:4px}
+  .card .sub{color:var(--muted);font-size:.82rem;margin-bottom:18px}
+  .field{margin-bottom:14px}
+  .field label{display:block;font-size:.79rem;color:var(--muted);margin-bottom:6px;font-weight:600}
+  .field input,.field select{width:100%;padding:12px 14px;background:var(--bg);border:1px solid var(--line);border-radius:10px;color:var(--txt);font-size:.95rem;outline:none}
+  .field input:focus,.field select:focus{border-color:var(--primary)}
+  .row{display:grid;grid-template-columns:1fr 1fr;gap:13px}
+  @media(max-width:480px){.row{grid-template-columns:1fr}}
+  .btn{width:100%;padding:14px;border:none;border-radius:11px;background:linear-gradient(135deg,var(--primary),var(--primary2));color:#06241f;font-weight:800;font-size:.95rem;cursor:pointer;margin-top:6px}
+  .btn:hover{filter:brightness(1.08)}
+
+  .result{margin-top:20px;border-top:1px dashed var(--line);padding-top:18px;display:none}
+  .result.show{display:block;animation:f .3s}
+  @keyframes f{from{opacity:0;transform:translateY(6px)}to{opacity:1}}
+  .verdict{text-align:center;padding:18px;border-radius:14px;margin-bottom:14px}
+  .verdict .lbl{font-size:.74rem;opacity:.85}
+  .verdict .big{font-size:1.45rem;font-weight:800;margin-top:5px}
+  .v-up{background:rgba(34,197,94,.12);border:1px solid rgba(34,197,94,.4)}
+  .v-down{background:rgba(239,68,68,.12);border:1px solid rgba(239,68,68,.4)}
+  .v-flat{background:rgba(234,179,8,.12);border:1px solid rgba(234,179,8,.4)}
+  .green{color:var(--green)}.red{color:var(--red)}.yellow{color:var(--yellow)}.blue{color:var(--blue)}
+  .res-big{text-align:center;margin-bottom:16px}
+  .res-big .lbl{font-size:.76rem;color:var(--muted)}
+  .res-big .val{font-size:1.9rem;font-weight:800;margin-top:4px}
+  .res-line{display:flex;justify-content:space-between;padding:9px 0;border-bottom:1px solid var(--line);font-size:.9rem}
+  .res-line:last-child{border:none}
+  .res-line .k{color:var(--muted)}.res-line .v{font-weight:700}
+
+  .news{background:var(--card2);border:1px solid var(--line);border-radius:12px;padding:13px;margin-bottom:10px}
+  .news .top{display:flex;justify-content:space-between;align-items:center;margin-bottom:5px}
+  .news .name{font-weight:700;font-size:.9rem}
+  .impact{font-size:.66rem;padding:3px 9px;border-radius:20px;font-weight:700}
+  .imp-high{background:rgba(239,68,68,.2);color:#fca5a5}
+  .imp-med{background:rgba(234,179,8,.2);color:#fde047}
+  .imp-low{background:rgba(34,197,94,.2);color:#86efac}
+  .news .meta{display:flex;gap:12px;flex-wrap:wrap;font-size:.76rem;color:var(--muted);margin-top:5px}
+  .news .cur{font-size:.7rem;background:var(--bg);padding:2px 8px;border-radius:6px;border:1px solid var(--line)}
+
+  .note{font-size:.76rem;color:var(--muted);background:var(--card2);padding:12px;border-radius:10px;margin-top:14px;border:1px solid var(--line);line-height:1.5}
+  .subtabs{display:flex;gap:6px;margin-bottom:16px;flex-wrap:wrap}
+  .stab{padding:8px 13px;border:1px solid var(--line);background:var(--bg);color:var(--muted);border-radius:9px;font-size:.8rem;font-weight:600;cursor:pointer}
+  .stab.active{background:var(--blue);color:#fff;border-color:var(--blue)}
+  footer{text-align:center;color:var(--muted);font-size:.78rem;margin-top:40px;padding:0 16px}
+  footer .disc{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px;margin-bottom:14px;line-height:1.6}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="brand">
+    <!-- GANTI src ke logo.png kamu. Sementara pakai emoji -->
+    <div class="ic">📰</div>
+    <div>Muzaki News Predict<small>FOREX • GOLD • KOMODITAS • CRYPTO</small></div>
+  </div>
+</header>
+
+<div class="wrap">
+  <div class="hero">
+    <h1>Prediksi Dampak <span>News Multi-Market</span></h1>
+    <p>Analisis kemungkinan arah Forex, Gold, Komoditas & Crypto berdasarkan rilis data ekonomi. Lengkap dengan kalkulator trading.</p>
+  </div>
+
+  <div class="tabs">
+    <button class="tab active" data-tab="predict">🎯 Prediksi News</button>
+    <button class="tab" data-tab="calendar">📅 Kalender</button>
+    <button class="tab" data-tab="calc">🧮 Kalkulator</button>
+    <button class="tab" data-tab="guide">📚 Panduan</button>
+  </div>
+
+  <!-- ========= PREDICTOR ========= -->
+  <div class="card tabpanel" id="predict">
+    <h2>Analisis Dampak Berita</h2>
+    <p class="sub">Pilih market & masukkan data rilis (Forecast vs Actual).</p>
+
+    <div class="field">
+      <label>Pilih Market / Aset</label>
+      <select id="p_market">
+        <option value="forex">💱 Forex (Mata Uang)</option>
+        <option value="gold">🥇 Gold / XAUUSD</option>
+        <option value="komoditas">🛢️ Komoditas (Oil/Silver dll)</option>
+        <option value="crypto">₿ Crypto / Bitcoin</option>
+      </select>
+    </div>
+
+    <div class="field">
+      <label>Jenis Berita / Indikator</label>
+      <select id="p_news">
+        <option value="growth">NFP / Employment (Tenaga Kerja)</option>
+        <option value="inflation">CPI / Inflasi</option>
+        <option value="rate">Suku Bunga (Interest Rate)</option>
+        <option value="gdp">GDP (Pertumbuhan Ekonomi)</option>
+        <option value="pmi">PMI / Manufacturing</option>
+        <option value="retail">Retail Sales</option>
+        <option value="unemploy">Unemployment Rate (Pengangguran)</option>
+        <option value="dxy">Dollar Index (DXY) / Risk Sentiment</option>
+      </select>
+    </div>
+
+    <div class="row">
+      <div class="field"><label>Forecast (Prediksi)</label><input type="number" step="any" id="p_fore" placeholder="contoh: 180"></div>
+      <div class="field"><label>Actual (Hasil Rilis)</label><input type="number" step="any" id="p_act" placeholder="contoh: 250"></div>
+    </div>
+
+    <button class="btn" onclick="predict()">Analisis Dampak</button>
+
+    <div class="result" id="p_res">
+      <div class="verdict" id="p_verdict">
+        <div class="lbl">PREDIKSI ARAH ASET</div>
+        <div class="big" id="p_dir">-</div>
+      </div>
+      <div class="res-line"><span class="k">Selisih Actual vs Forecast</span><span class="v" id="p_diff">-</span></div>
+      <div class="res-line"><span class="k">Sentimen</span><span class="v" id="p_sent">-</span></div>
+      <div class="res-line"><span class="k">Kekuatan Sinyal</span><span class="v" id="p_strength">-</span></div>
+      <div class="res-line"><span class="k">Saran Bias</span><span class="v" id="p_bias">-</span></div>
+      <div class="note" id="p_expl"></div>
+    </div>
+  </div>
+
+  <!-- ========= CALENDAR ========= -->
+  <div class="card tabpanel" id="calendar" style="display:none">
+    <h2>Kalender News Penting</h2>
+    <p class="sub">Event high-impact yang menggerakkan multi-market.</p>
+    <div class="news"><div class="top"><span class="name">Non-Farm Payroll (NFP)</span><span class="impact imp-high">HIGH</span></div><div class="meta"><span class="cur">USD</span><span class="cur">GOLD</span><span class="cur">BTC</span><span>⏰ Jumat pertama tiap bulan, 19:30 WIB</span></div></div>
+    <div class="news"><div class="top"><span class="name">CPI (Inflasi US)</span><span class="impact imp-high">HIGH</span></div><div class="meta"><span class="cur">USD</span><span class="cur">GOLD</span><span class="cur">BTC</span><span>⏰ Pertengahan bulan, 19:30 WIB</span></div></div>
+    <div class="news"><div class="top"><span class="name">FOMC Interest Rate</span><span class="impact imp-high">HIGH</span></div><div class="meta"><span class="cur">USD</span><span class="cur">GOLD</span><span class="cur">BTC</span><span>⏰ 8x setahun, 01:00 WIB</span></div></div>
+    <div class="news"><div class="top"><span class="name">Crude Oil Inventories</span><span class="impact imp-med">MEDIUM</span></div><div class="meta"><span class="cur">OIL</span><span>⏰ Tiap Rabu, 21:30 WIB</span></div></div>
+    <div class="news"><div class="top"><span class="name">PCE Price Index</span><span class="impact imp-high">HIGH</span></div><div class="meta"><span class="cur">USD</span><span class="cur">GOLD</span><span>⏰ Akhir bulan</span></div></div>
+    <div class="news"><div class="top"><span class="name">Bitcoin ETF Flows / Crypto News</span><span class="impact imp-med">MEDIUM</span></div><div class="meta"><span class="cur">BTC</span><span>⏰ Harian (variatif)</span></div></div>
+    <div class="note">📌 Untuk jadwal real-time, gunakan <b>ForexFactory</b> / <b>Investing.com</b>. Data di atas gambaran jadwal rutin.</div>
+  </div>
+
+  <!-- ========= KALKULATOR ========= -->
+  <div class="card tabpanel" id="calc" style="display:none">
+    <h2>Kalkulator Trading</h2>
+    <p class="sub">Hitung profit, risk, lot, dan position size.</p>
+
+    <div class="subtabs">
+      <div class="stab active" data-c="pl">💰 Profit/Loss</div>
+      <div class="stab" data-c="risk">🛡️ Risk / Lot Size</div>
+      <div class="stab" data-c="pip">📏 Nilai Pip</div>
+    </div>
+
+    <!-- PL -->
+    <div class="cpanel" id="c-pl">
+      <div class="row">
+        <div class="field"><label>Harga Entry</label><input type="number" step="any" id="pl_entry" placeholder="2000"></div>
+        <div class="field"><label>Harga Exit / TP</label><input type="number" step="any" id="pl_exit" placeholder="2050"></div>
+      </div>
+      <div class="row">
+        <div class="field"><label>Ukuran Lot</label><input type="number" step="any" id="pl_lot" placeholder="0.1"></div>
+        <div class="field"><label>Kontrak / Lot (unit)</label><input type="number" step="any" id="pl_size" placeholder="100 (gold), 100000 (forex)"></div>
+      </div>
+      <div class="field"><label>Posisi</label><select id="pl_dir"><option value="1">BUY (Long)</option><option value="-1">SELL (Short)</option></select></div>
+      <button class="btn" onclick="cPL()">Hitung P/L</button>
+      <div class="result" id="cpl_res">
+        <div class="res-big"><div class="lbl">Estimasi Profit / Loss</div><div class="val" id="cpl_val">$0</div></div>
+        <div class="res-line"><span class="k">Selisih Harga</span><span class="v" id="cpl_diff">0</span></div>
+        <div class="res-line"><span class="k">Total Unit</span><span class="v" id="cpl_unit">0</span></div>
+      </div>
+    </div>
+
+    <!-- RISK -->
+    <div class="cpanel" id="c-risk" style="display:none">
+      <div class="row">
+        <div class="field"><label>Modal / Balance ($)</label><input type="number" step="any" id="rk_bal" placeholder="1000"></div>
+        <div class="field"><label>Risk per Trade (%)</label><input type="number" step="any" id="rk_pct" placeholder="2"></div>
+      </div>
+      <div class="row">
+        <div class="field"><label>Stop Loss (jarak harga)</label><input type="number" step="any" id="rk_sl" placeholder="20"></div>
+        <div class="field"><label>Nilai per 1 unit/poin ($)</label><input type="number" step="any" id="rk_val" placeholder="1"></div>
+      </div>
+      <button class="btn" onclick="cRisk()">Hitung Position Size</button>
+      <div class="result" id="crisk_res">
+        <div class="res-big"><div class="lbl">Maksimal Risk ($)</div><div class="val yellow" id="crk_risk">$0</div></div>
+        <div class="res-line"><span class="k">Ukuran Posisi (unit)</span><span class="v green" id="crk_size">0</span></div>
+        <div class="res-line"><span class="k">Saran</span><span class="v" id="crk_note">-</span></div>
+      </div>
+    </div>
+
+    <!-- PIP -->
+    <div class="cpanel" id="c-pip" style="display:none">
+      <div class="row">
+        <div class="field"><label>Ukuran Lot</label><input type="number" step="any" id="pp_lot" placeholder="1"></div>
+        <div class="field"><label>Kontrak/Lot (unit)</label><input type="number" step="any" id="pp_size" placeholder="100000"></div>
+      </div>
+      <div class="field"><label>Nilai 1 Pip (poin)</label><input type="number" step="any" id="pp_pip" value="0.0001"></div>
+      <button class="btn" onclick="cPip()">Hitung Nilai Pip</button>
+      <div class="result" id="cpip_res">
+        <div class="res-big"><div class="lbl">Nilai per Pip</div><div class="val blue" id="cpp_val">$0</div></div>
+        <div class="res-line"><span class="k">Total Unit</span><span class="v" id="cpp_unit">0</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========= GUIDE ========= -->
+  <div class="card tabpanel" id="guide" style="display:none">
+    <h2>Panduan Logika News</h2>
+    <p class="sub">Cara membaca dampak news ke tiap market.</p>
+    <div class="news"><b>💱 Forex:</b><br><span style="color:var(--muted);font-size:.85rem">Data POSITIF (Actual > Forecast) → mata uang tsb MENGUAT.</span></div>
+    <div class="news"><b>🥇 Gold (XAU):</b><br><span style="color:var(--muted);font-size:.85rem">USD KUAT → Gold biasanya TURUN. USD lemah / risk-off → Gold NAIK (safe haven).</span></div>
+    <div class="news"><b>🛢️ Komoditas:</b><br><span style="color:var(--muted);font-size:.85rem">Data ekonomi kuat → demand naik → harga komoditas cenderung naik. USD kuat menekan harga.</span></div>
+    <div class="news"><b>₿ Crypto/Bitcoin:</b><br><span style="color:var(--muted);font-size:.85rem">USD kuat / suku bunga tinggi → BTC cenderung TURUN (risk asset). Risk-on / likuiditas → BTC NAIK.</span></div>
+    <div class="news"><b>⚠️ Tips:</b><br><span style="color:var(--muted);font-size:.85rem">Hindari entry 5-15 menit sebelum & sesudah news HIGH impact. Spread melebar, harga liar!</span></div>
+  </div>
+
+  <footer>
+    <div class="disc">⚠️ <b>Disclaimer:</b> Muzaki News Predict adalah alat EDUKASI. Analisis berbasis logika ekonomi umum & TIDAK menjamin pergerakan pasar. Trading Forex/Gold/Komoditas/Crypto berisiko tinggi. Selalu gunakan stop loss & risk management. DYOR.</div>
+    © 2024 Muzaki News Predict 🌐
+  </footer>
+</div>
+
+<script>
+  const inverse=['unemploy']; // angka tinggi = buruk
+
+  // tabs
+  document.querySelectorAll('.tab').forEach(t=>{t.onclick=()=>{
+    document.querySelectorAll('.tab').forEach(x=>x.classList.remove('active'));t.classList.add('active');
+    document.querySelectorAll('.tabpanel').forEach(p=>p.style.display='none');
+    document.getElementById(t.dataset.tab).style.display='block';
+  };});
+  // subtabs kalkulator
+  document.querySelectorAll('.stab').forEach(s=>{s.onclick=()=>{
+    document.querySelectorAll('.stab').forEach(x=>x.classList.remove('active'));s.classList.add('active');
+    document.querySelectorAll('.cpanel').forEach(p=>p.style.display='none');
+    document.getElementById('c-'+s.dataset.c).style.display='block';
+  };});
+
+  const usd=n=>"$"+Math.abs(n).toLocaleString("en-US",{maximumFractionDigits:2});
+
+  function predict(){
+    const market=p_market.value, news=p_news.value;
+    const fore=parseFloat(p_fore.value), act=parseFloat(p_act.value);
+    if(isNaN(fore)||isNaN(act)) return alert("Isi Forecast & Actual!");
+
+    let diff=act-fore;
+    let usdStrong = diff>0;                  // data positif -> USD/aset rilis menguat
+    if(inverse.includes(news)) usdStrong=!usdStrong;
+    const pct=fore!==0?Math.abs(diff/fore*100):Math.abs(diff);
+    let strength=pct>10?"KUAT 💪":pct>3?"SEDANG":"LEMAH";
+
+    // tentukan arah aset target sesuai market
+    let assetUp; // true = naik
+    let assetName;
+    if(market==='forex'){ assetUp=usdStrong; assetName="Mata uang yang dirilis"; }
+    else if(market==='gold'){ assetUp=!usdStrong; assetName="GOLD (XAUUSD)"; }       // USD kuat -> gold turun
+    else if(market==='komoditas'){ assetUp=!usdStrong; assetName="Komoditas"; }
+    else { assetUp=!usdStrong; assetName="Bitcoin / Crypto"; }                       // USD kuat -> crypto turun
+
+    const verdict=document.getElementById('p_verdict'), dir=document.getElementById('p_dir');
+    if(diff===0){
+      verdict.className="verdict v-flat"; dir.innerHTML="➡️ SIDEWAY / NETRAL";
+      strength="NETRAL";
+      p_bias.textContent="Tunggu konfirmasi"; p_bias.className="v yellow";
+      p_sent.textContent="Sesuai ekspektasi"; p_sent.className="v yellow";
+    } else if(assetUp){
+      verdict.className="verdict v-up"; dir.innerHTML=`🟢 ${assetName} cenderung NAIK`;
+      p_bias.textContent="Bias BUY / Long"; p_bias.className="v green";
+      p_sent.textContent="Bullish"; p_sent.className="v green";
+    } else {
+      verdict.className="verdict v-down"; dir.innerHTML=`🔴 ${assetName} cenderung TURUN`;
+      p_bias.textContent="Bias SELL / Short"; p_bias.className="v red";
+      p_sent.textContent="Bearish"; p_sent.className="v red";
+    }
+    p_diff.textContent=(diff>0?"+":"")+diff.toFixed(2)+" ("+pct.toFixed(1)+"%)";
+    p_strength.textContent=strength;
+
+    const newsLabel=p_news.options[p_news.selectedIndex].text;
+    let expl=`📊 <b>${newsLabel}</b> rilis Actual (${act}) ${diff>0?'lebih TINGGI':diff<0?'lebih RENDAH':'SAMA'} dari Forecast (${fore}). `;
+    if(diff!==0){
+      expl+= usdStrong ? `Ini cenderung MENGUATKAN USD. ` : `Ini cenderung MELEMAHKAN USD. `;
+      if(market==='gold') expl+=`Karena Gold berlawanan arah dengan USD, maka Gold berpotensi ${assetUp?'NAIK':'TURUN'}. `;
+      else if(market==='crypto') expl+=`Bitcoin sebagai risk asset cenderung ${assetUp?'NAIK saat likuiditas longgar':'TURUN saat USD/suku bunga kuat'}. `;
+      else if(market==='komoditas') expl+=`Komoditas dihargai dalam USD, sehingga berpotensi ${assetUp?'NAIK':'TURUN'}. `;
+    }
+    expl+=`⚠️ Volatilitas tinggi saat rilis — gunakan stop loss!`;
+    p_expl.innerHTML=expl;
+    p_res.classList.add('show');
+  }
+
+  // KALKULATOR P/L
+  function cPL(){
+    const e=+pl_entry.value,x=+pl_exit.value,lot=+pl_lot.value,size=+pl_size.value,d=+pl_dir.value;
+    if(!e||!x||!lot||!size) return alert("Lengkapi field!");
+    const unit=lot*size, diff=(x-e)*d, pl=diff*unit;
+    cpl_val.textContent=(pl>=0?"+":"-")+usd(pl); cpl_val.className="val "+(pl>=0?"green":"red");
+    cpl_diff.textContent=diff.toFixed(4);
+    cpl_unit.textContent=unit.toLocaleString("en-US");
+    cpl_res.classList.add('show');
+  }
+  // RISK
+  function cRisk(){
+    const bal=+rk_bal.value,pct=+rk_pct.value,sl=+rk_sl.value,val=+rk_val.value;
+    if(!bal||!pct||!sl||!val) return alert("Lengkapi field!");
+    const risk=bal*pct/100, size=risk/(sl*val);
+    crk_risk.textContent=usd(risk);
+    crk_size.textContent=size.toFixed(2)+" unit";
+    crk_note.textContent=pct>3?"⚠️ Risk agak besar":"✅ Risk aman";
+    crk_note.className="v "+(pct>3?"yellow":"green");
+    crisk_res.classList.add('show');
+  }
+  // PIP
+  function cPip(){
+    const lot=+pp_lot.value,size=+pp_size.value,pip=+pp_pip.value;
+    if(!lot||!size||!pip) return alert("Lengkapi field!");
+    const unit=lot*size, val=unit*pip;
+    cpp_val.textContent=usd(val);
+    cpp_unit.textContent=unit.toLocaleString("en-US");
+    cpip_res.classList.add('show');
+  }
+</script>
+</body>
+</html>
