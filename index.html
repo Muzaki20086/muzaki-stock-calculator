@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Muzaki Stock Calculator — Kalkulator Saham IDX</title>
+<meta name="description" content="Kalkulator saham lengkap: Profit/Loss, Average Down, ARA/ARB, Lot, dan Compound Interest untuk investor & trader Indonesia.">
+<style>
+  :root{
+    --bg:#0a0e1a; --bg2:#111727; --card:#161d31; --line:#243049;
+    --txt:#e6ecf7; --muted:#8a97b5; --primary:#3b82f6; --primary2:#2563eb;
+    --green:#22c55e; --red:#ef4444; --yellow:#eab308; --radius:14px;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;font-family:'Segoe UI',system-ui,-apple-system,sans-serif}
+  body{background:radial-gradient(circle at top,#13203b 0%,var(--bg) 60%);color:var(--txt);min-height:100vh;padding-bottom:60px}
+  a{color:inherit;text-decoration:none}
+
+  /* Header */
+  header{padding:22px 18px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--line);position:sticky;top:0;background:rgba(10,14,26,.85);backdrop-filter:blur(10px);z-index:50}
+  .logo{display:flex;align-items:center;gap:12px;font-weight:800;font-size:1.25rem}
+  .logo .ic{width:38px;height:38px;border-radius:11px;background:linear-gradient(135deg,var(--primary),#8b5cf6);display:grid;place-items:center;font-size:20px}
+  .logo small{display:block;font-size:.65rem;color:var(--muted);font-weight:500;letter-spacing:.5px}
+  .badge{font-size:.7rem;background:var(--card);border:1px solid var(--line);padding:5px 11px;border-radius:30px;color:var(--muted)}
+
+  .wrap{max-width:760px;margin:0 auto;padding:0 18px}
+
+  /* Hero */
+  .hero{text-align:center;padding:46px 0 30px}
+  .hero h1{font-size:2rem;line-height:1.2;margin-bottom:12px}
+  .hero h1 span{background:linear-gradient(90deg,#3b82f6,#8b5cf6);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+  .hero p{color:var(--muted);font-size:.95rem;max-width:480px;margin:0 auto}
+
+  /* Tabs */
+  .tabs{display:flex;gap:8px;overflow-x:auto;padding:6px;background:var(--card);border:1px solid var(--line);border-radius:var(--radius);margin-bottom:22px;scrollbar-width:none}
+  .tabs::-webkit-scrollbar{display:none}
+  .tab{flex:0 0 auto;padding:11px 16px;border-radius:10px;font-size:.85rem;font-weight:600;color:var(--muted);cursor:pointer;white-space:nowrap;transition:.2s;border:none;background:none}
+  .tab.active{background:linear-gradient(135deg,var(--primary),var(--primary2));color:#fff}
+
+  /* Card */
+  .card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:24px;margin-bottom:20px}
+  .card h2{font-size:1.15rem;margin-bottom:4px}
+  .card .sub{color:var(--muted);font-size:.82rem;margin-bottom:20px}
+
+  .field{margin-bottom:15px}
+  .field label{display:block;font-size:.8rem;color:var(--muted);margin-bottom:6px;font-weight:600}
+  .field input,.field select{width:100%;padding:12px 14px;background:var(--bg2);border:1px solid var(--line);border-radius:10px;color:var(--txt);font-size:.95rem;outline:none;transition:.2s}
+  .field input:focus,.field select:focus{border-color:var(--primary)}
+  .row{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+  @media(max-width:480px){.row{grid-template-columns:1fr}}
+
+  .btn{width:100%;padding:14px;border:none;border-radius:11px;background:linear-gradient(135deg,var(--primary),var(--primary2));color:#fff;font-weight:700;font-size:.95rem;cursor:pointer;transition:.2s;margin-top:8px}
+  .btn:hover{filter:brightness(1.1)}
+  .btn-ghost{background:var(--bg2);border:1px solid var(--line);color:var(--muted);margin-top:10px}
+
+  /* Result */
+  .result{margin-top:22px;border-top:1px dashed var(--line);padding-top:20px;display:none}
+  .result.show{display:block;animation:fade .3s ease}
+  @keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1}}
+  .res-big{text-align:center;margin-bottom:18px}
+  .res-big .lbl{font-size:.78rem;color:var(--muted)}
+  .res-big .val{font-size:2rem;font-weight:800;margin-top:4px}
+  .res-line{display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--line);font-size:.9rem}
+  .res-line:last-child{border:none}
+  .res-line .k{color:var(--muted)}
+  .res-line .v{font-weight:700}
+  .green{color:var(--green)} .red{color:var(--red)} .yellow{color:var(--yellow)} .blue{color:var(--primary)}
+
+  .note{font-size:.75rem;color:var(--muted);background:var(--bg2);padding:11px 13px;border-radius:10px;margin-top:14px;border:1px solid var(--line)}
+  .pill-row{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:18px}
+  .pill{font-size:.75rem;background:var(--bg2);border:1px solid var(--line);padding:6px 12px;border-radius:30px;cursor:pointer}
+  .pill.active{background:var(--primary);color:#fff;border-color:var(--primary)}
+
+  footer{text-align:center;color:var(--muted);font-size:.78rem;margin-top:40px;padding:0 18px}
+  footer .disc{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px;margin-bottom:16px;line-height:1.6}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">
+    <div class="ic">📈</div>
+    <div>Muzaki<small>STOCK CALCULATOR</small></div>
+  </div>
+  <span class="badge">IDX • Gratis</span>
+</header>
+
+<div class="wrap">
+  <div class="hero">
+    <h1>Kalkulator Saham <span>Muzaki</span></h1>
+    <p>Hitung profit, average down, lot, ARA/ARB, dan compound interest dengan cepat & akurat. Khusus pasar saham Indonesia (BEI/IDX).</p>
+  </div>
+
+  <!-- Broker fee preset -->
+  <div class="card" style="padding:16px 18px">
+    <label style="font-size:.8rem;color:var(--muted);font-weight:600">Pilih Broker (fee otomatis)</label>
+    <div class="pill-row" style="margin-top:10px;margin-bottom:0" id="brokerPills">
+      <div class="pill active" data-buy="0.15" data-sell="0.25">Stockbit (0.15/0.25%)</div>
+      <div class="pill" data-buy="0.19" data-sell="0.29">IPOT (0.19/0.29%)</div>
+      <div class="pill" data-buy="0.17" data-sell="0.27">BNI Bions (0.17/0.27%)</div>
+      <div class="pill" data-buy="0.10" data-sell="0.20">Custom Murah (0.10/0.20%)</div>
+    </div>
+  </div>
+
+  <!-- Tabs -->
+  <div class="tabs">
+    <button class="tab active" data-tab="pl">💰 Profit/Loss</button>
+    <button class="tab" data-tab="avg">📊 Average Down</button>
+    <button class="tab" data-tab="lot">🧮 Lot & Budget</button>
+    <button class="tab" data-tab="araarb">📈 ARA/ARB</button>
+    <button class="tab" data-tab="comp">🔄 Compound</button>
+  </div>
+
+  <!-- ============ PROFIT/LOSS ============ -->
+  <div class="card tabpanel" id="pl">
+    <h2>Kalkulator Profit / Loss</h2>
+    <p class="sub">Hitung untung/rugi bersih setelah fee transaksi.</p>
+    <div class="row">
+      <div class="field"><label>Harga Beli (Rp)</label><input type="number" id="pl_buy" placeholder="contoh: 1000"></div>
+      <div class="field"><label>Harga Jual (Rp)</label><input type="number" id="pl_sell" placeholder="contoh: 1200"></div>
+    </div>
+    <div class="row">
+      <div class="field"><label>Jumlah Lot</label><input type="number" id="pl_lot" placeholder="1 lot = 100 lembar"></div>
+      <div class="field"><label>Fee Beli / Jual (%)</label><input type="text" id="pl_fee" readonly value="0.15% / 0.25%"></div>
+    </div>
+    <button class="btn" onclick="calcPL()">Hitung Profit/Loss</button>
+    <div class="result" id="pl_res">
+      <div class="res-big"><div class="lbl">Profit / Loss Bersih</div><div class="val" id="pl_net">Rp 0</div></div>
+      <div class="res-line"><span class="k">Total Modal Beli</span><span class="v" id="pl_total_buy">Rp 0</span></div>
+      <div class="res-line"><span class="k">Total Hasil Jual</span><span class="v" id="pl_total_sell">Rp 0</span></div>
+      <div class="res-line"><span class="k">Total Fee</span><span class="v red" id="pl_total_fee">Rp 0</span></div>
+      <div class="res-line"><span class="k">Break Even Point</span><span class="v yellow" id="pl_bep">Rp 0</span></div>
+      <div class="res-line"><span class="k">Return (%)</span><span class="v" id="pl_pct">0%</span></div>
+    </div>
+  </div>
+
+  <!-- ============ AVERAGE DOWN ============ -->
+  <div class="card tabpanel" id="avg" style="display:none">
+    <h2>Kalkulator Average Down</h2>
+    <p class="sub">Hitung harga rata-rata setelah pembelian kedua.</p>
+    <div class="row">
+      <div class="field"><label>Harga Beli 1 (Rp)</label><input type="number" id="av_p1" placeholder="9500"></div>
+      <div class="field"><label>Lot Beli 1</label><input type="number" id="av_l1" placeholder="10"></div>
+    </div>
+    <div class="row">
+      <div class="field"><label>Harga Beli 2 (Rp)</label><input type="number" id="av_p2" placeholder="8000"></div>
+      <div class="field"><label>Lot Beli 2</label><input type="number" id="av_l2" placeholder="15"></div>
+    </div>
+    <div class="field"><label>Harga Saat Ini (Rp) — opsional</label><input type="number" id="av_now" placeholder="untuk cek posisi P/L"></div>
+    <button class="btn" onclick="calcAvg()">Hitung Average</button>
+    <div class="result" id="av_res">
+      <div class="res-big"><div class="lbl">Harga Rata-Rata Baru</div><div class="val blue" id="av_avg">Rp 0</div></div>
+      <div class="res-line"><span class="k">Total Lot</span><span class="v" id="av_tlot">0</span></div>
+      <div class="res-line"><span class="k">Total Modal</span><span class="v" id="av_tmod">Rp 0</span></div>
+      <div class="res-line"><span class="k">Posisi Saat Ini</span><span class="v" id="av_pos">-</span></div>
+    </div>
+  </div>
+
+  <!-- ============ LOT & BUDGET ============ -->
+  <div class="card tabpanel" id="lot" style="display:none">
+    <h2>Kalkulator Lot & Budget</h2>
+    <p class="sub">Berapa lot yang bisa dibeli dengan budget kamu?</p>
+    <div class="row">
+      <div class="field"><label>Budget Tersedia (Rp)</label><input type="number" id="lt_bud" placeholder="5000000"></div>
+      <div class="field"><label>Harga Saham (Rp)</label><input type="number" id="lt_price" placeholder="1000"></div>
+    </div>
+    <button class="btn" onclick="calcLot()">Hitung</button>
+    <div class="result" id="lt_res">
+      <div class="res-big"><div class="lbl">Jumlah Lot yang Bisa Dibeli</div><div class="val green" id="lt_lot">0 Lot</div></div>
+      <div class="res-line"><span class="k">Jumlah Lembar</span><span class="v" id="lt_lembar">0</span></div>
+      <div class="res-line"><span class="k">Dana Terpakai (+fee)</span><span class="v" id="lt_used">Rp 0</span></div>
+      <div class="res-line"><span class="k">Sisa Dana</span><span class="v yellow" id="lt_left">Rp 0</span></div>
+    </div>
+  </div>
+
+  <!-- ============ ARA / ARB ============ -->
+  <div class="card tabpanel" id="araarb" style="display:none">
+    <h2>Kalkulator ARA / ARB</h2>
+    <p class="sub">Simulasi batas Auto Reject (Papan Utama, aturan simetris 2023).</p>
+    <div class="field"><label>Harga Penutupan Acuan (Rp)</label><input type="number" id="ar_price" placeholder="contoh: 1000"></div>
+    <div class="field"><label>Jumlah Level (1-3)</label><input type="number" id="ar_step" value="1" min="1" max="3"></div>
+    <button class="btn" onclick="calcARA()">Hitung ARA/ARB</button>
+    <div class="result" id="ar_res">
+      <div class="res-line"><span class="k">Harga Acuan</span><span class="v" id="ar_base">Rp 0</span></div>
+      <div id="ar_levels"></div>
+    </div>
+    <div class="note">⚠️ Batas auto reject: ±35% (harga 50-200), ±25% (200-5000), ±20% (>5000). Aturan dapat berubah sesuai kebijakan BEI.</div>
+  </div>
+
+  <!-- ============ COMPOUND ============ -->
+  <div class="card tabpanel" id="comp" style="display:none">
+    <h2>Simulasi Compound Interest</h2>
+    <p class="sub">Proyeksi pertumbuhan investasi dengan reinvestasi.</p>
+    <div class="row">
+      <div class="field"><label>Modal Awal (Rp)</label><input type="number" id="cp_init" placeholder="10000000"></div>
+      <div class="field"><label>Setoran / Tahun (Rp)</label><input type="number" id="cp_add" placeholder="12000000"></div>
+    </div>
+    <div class="row">
+      <div class="field"><label>Return / Tahun (%)</label><input type="number" id="cp_rate" value="12"></div>
+      <div class="field"><label>Jangka Waktu (Tahun)</label><input type="number" id="cp_year" value="10"></div>
+    </div>
+    <button class="btn" onclick="calcComp()">Hitung Proyeksi</button>
+    <div class="result" id="cp_res">
+      <div class="res-big"><div class="lbl">Nilai Akhir Investasi</div><div class="val green" id="cp_final">Rp 0</div></div>
+      <div class="res-line"><span class="k">Total Modal Disetor</span><span class="v" id="cp_setor">Rp 0</span></div>
+      <div class="res-line"><span class="k">Total Keuntungan</span><span class="v green" id="cp_profit">Rp 0</span></div>
+    </div>
+    <div class="note">📌 Rata-rata return IHSG historis ~12-15%/tahun jangka panjang. Simulasi tidak menjamin hasil aktual.</div>
+  </div>
+
+  <footer>
+    <div class="disc">
+      ⚠️ <b>Disclaimer:</b> Muzaki Stock Calculator bersifat edukatif & bukan saran investasi.
+      Hasil perhitungan adalah estimasi. Investasi saham mengandung risiko. DYOR (Do Your Own Research).
+    </div>
+    © 2024 Muzaki Stock Calculator · Dibuat untuk investor & trader Indonesia 🇮🇩
+  </footer>
+</div>
+
+<script>
+  let feeBuy=0.15, feeSell=0.25;
+  const rp = n => "Rp "+Math.round(n).toLocaleString("id-ID");
+
+  // Broker pills
+  document.querySelectorAll('#brokerPills .pill').forEach(p=>{
+    p.onclick=()=>{
+      document.querySelectorAll('#brokerPills .pill').forEach(x=>x.classList.remove('active'));
+      p.classList.add('active');
+      feeBuy=parseFloat(p.dataset.buy); feeSell=parseFloat(p.dataset.sell);
+      document.getElementById('pl_fee').value = feeBuy+"% / "+feeSell+"%";
+    };
+  });
+
+  // Tabs
+  document.querySelectorAll('.tab').forEach(t=>{
+    t.onclick=()=>{
+      document.querySelectorAll('.tab').forEach(x=>x.classList.remove('active'));
